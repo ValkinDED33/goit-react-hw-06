@@ -1,23 +1,21 @@
-import { Component } from "react";
-import { connect } from "react-redux";
+import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { addContact } from "../../redux/contactsSlice";
 import css from "./ContactForm.module.css";
 
-class ContactForm extends Component {
-  state = {
-    name: "",
-    phone: "",
+const ContactForm = () => {
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const contacts = useSelector((state) => state.contacts.items);
+  const dispatch = useDispatch();
+
+  const handleChange = (e) => {
+    if (e.target.name === "name") setName(e.target.value);
+    if (e.target.name === "phone") setPhone(e.target.value);
   };
 
-  handleChange = (e) => {
-    this.setState({ [e.target.name]: e.target.value });
-  };
-
-  handleSubmit = (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    const { name, phone } = this.state;
-    const { contacts, addContact } = this.props;
-
     if (
       contacts.some(
         (contact) => contact.name.toLowerCase() === name.toLowerCase()
@@ -26,44 +24,36 @@ class ContactForm extends Component {
       alert(`${name} уже есть в контактах!`);
       return;
     }
-
-    addContact({ id: Date.now(), name, phone });
-    this.setState({ name: "", phone: "" });
+    dispatch(addContact({ id: Date.now(), name, phone }));
+    setName("");
+    setPhone("");
   };
 
-  render() {
-    return (
-      <form className={css.form} onSubmit={this.handleSubmit}>
-        <input
-          className={css.input}
-          type="text"
-          name="name"
-          placeholder="Имя"
-          value={this.state.name}
-          onChange={this.handleChange}
-          required
-        />
-        <input
-          className={css.input}
-          type="text"
-          name="phone"
-          placeholder="Телефон"
-          value={this.state.phone}
-          onChange={this.handleChange}
-          required
-        />
-        <button className={css["submit-button"]} type="submit">
-          Добавить
-        </button>
-      </form>
-    );
-  }
-}
+  return (
+    <form className={css.form} onSubmit={handleSubmit}>
+      <input
+        className={css.input}
+        type="text"
+        name="name"
+        placeholder="Имя"
+        value={name}
+        onChange={handleChange}
+        required
+      />
+      <input
+        className={css.input}
+        type="text"
+        name="phone"
+        placeholder="Телефон"
+        value={phone}
+        onChange={handleChange}
+        required
+      />
+      <button className={css["submit-button"]} type="submit">
+        Добавить
+      </button>
+    </form>
+  );
+};
 
-const mapStateToProps = (state) => ({
-  contacts: state.contacts.items,
-});
-
-const mapDispatchToProps = { addContact };
-
-export default connect(mapStateToProps, mapDispatchToProps)(ContactForm);
+export default ContactForm;

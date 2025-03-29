@@ -1,30 +1,20 @@
-import { Component } from "react";
-import { connect } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { changeFilter } from "../../redux/filtersSlice";
 import css from "./SearchBox.module.css";
 
-class SearchBox extends Component {
-  handleChange = (e) => {
-    this.props.changeFilter(e.target.value);
-  };
+const SearchBox = () => {
+  const dispatch = useDispatch();
+  const filter = useSelector((state) => state.filters.name);
 
-  render() {
-    return (
-      <input
-        className={css.input}
-        type="text"
-        placeholder="Поиск контактов"
-        value={this.props.filter}
-        onChange={this.handleChange}
-      />
-    );
-  }
-}
+  return (
+    <input
+      className={css.input}
+      type="text"
+      placeholder="Поиск контактов"
+      value={filter}
+      onChange={(e) => dispatch(changeFilter(e.target.value))}
+    />
+  );
+};
 
-const mapStateToProps = (state) => ({
-  filter: state.filters.name,
-});
-
-const mapDispatchToProps = { changeFilter };
-
-export default connect(mapStateToProps, mapDispatchToProps)(SearchBox);
+export default SearchBox;

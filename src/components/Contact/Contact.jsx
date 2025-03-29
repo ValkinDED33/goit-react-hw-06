@@ -1,29 +1,23 @@
-import { Component } from "react";
-import { connect } from "react-redux";
+import { useDispatch } from "react-redux";
 import { deleteContact } from "../../redux/contactsSlice";
 import css from "./Contact.module.css";
 
-class Contact extends Component {
-  handleDelete = () => {
-    this.props.deleteContact(this.props.contact.id);
-  };
+const Contact = ({ contact }) => {
+  const dispatch = useDispatch();
 
-  render() {
-    const { name, phone } = this.props.contact;
+  return (
+    <li className={css.contact}>
+      <span>
+        {contact.name}: {contact.phone}
+      </span>
+      <button
+        className={css["delete-button"]}
+        onClick={() => dispatch(deleteContact(contact.id))}
+      >
+        Удалить
+      </button>
+    </li>
+  );
+};
 
-    return (
-      <li className={css.contact}>
-        <span>
-          {name}: {phone}
-        </span>
-        <button className={css["delete-button"]} onClick={this.handleDelete}>
-          Удалить
-        </button>
-      </li>
-    );
-  }
-}
-
-const mapDispatchToProps = { deleteContact };
-
-export default connect(null, mapDispatchToProps)(Contact);
+export default Contact;
